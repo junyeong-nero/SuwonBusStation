@@ -1,8 +1,16 @@
 import numpy as np
 import math
+import pandas as pd
 
 MIN = 0
 MAX = 0
+
+
+def prettyPrint(title, mat):
+    print(title + '\n' + str(mat) + '\n')
+    # mat = pd.DataFrame(mat)
+    # mat.columns = [''] * mat.shape[1]
+    # print(title + mat.to_string(index=False) + "\n")
 
 
 # MIN_MAX 방법에 사용되는 함수
@@ -20,7 +28,7 @@ def main():
     A = np.mat([[33.2, 12.4], [28.1, 15.3], [20.1, 13.3]])
     m = 3  # row count
     n = 2  # column count
-    print("A, matrix data : " + str(A))
+    prettyPrint("A, matrix data", A)
 
     global MIN, MAX
     MAX = float(A.max())
@@ -33,7 +41,7 @@ def main():
         for j in range(n):
             P.itemset((i, j), fMAX_MIN(P.item((i, j))))
 
-    print("P : " + str(P))
+    prettyPrint("P", P)
 
     E = []
     for j in range(n):
@@ -43,21 +51,21 @@ def main():
         E.append(s)
 
     # 엔트로피가 음수만 나와!
-    print("Entropy : " + str(E))
+    prettyPrint("Entropy", E)
 
     D = []
     for num in E:
         D.append(1 - num)
 
     # 하지만 다양성은 양수네? 이래서 1에서 엔트로피를 빼는건가봐
-    print("Diversity : " + str(D))
+    prettyPrint("Diversity", D)
 
     W = []
     for num in D:
         W.append(num / sum(D))
 
     # 그래서 가중치는?
-    print("Weight : " + str(W))
+    prettyPrint("Weight", W)
 
     R = []
     for i in range(m):
@@ -67,7 +75,7 @@ def main():
         R.append(w)
 
     # 가중치를 적용한 각 지역별 점수
-    print("Result : " + str(R))
+    prettyPrint("Result", R)
 
 
 if __name__ == '__main__':
