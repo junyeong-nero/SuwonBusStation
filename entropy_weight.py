@@ -4,6 +4,7 @@ import pandas as pd
 
 MIN = 0
 MAX = 0
+RMS = 0
 
 
 def prettyPrint(title, mat):
@@ -15,7 +16,11 @@ def prettyPrint(title, mat):
 
 # MIN_MAX 방법에 사용되는 함수
 def fMAX_MIN(x):
-    return (x - MIN) / (MAX - MIN) + 0.1  # 0되면 log 함수의 domain 에서 벗어나는 에러발생
+    return (x - MIN) / (MAX - MIN) + 0.01  # 0되면 log 함수의 domain 에서 벗어나는 에러발생
+
+
+def fNormalization(x):
+    return x / RMS + 0.01  # 0되면 log 함수의 domain 에서 벗어나는 에러발생
 
 
 # 엔트로피 계산에 사용되는 함수
@@ -25,56 +30,58 @@ def fEntropy(p):
 
 
 def main():
-    A = np.mat([[33.2, 12.4], [28.1, 15.3], [20.1, 13.3]])
+    # 데이터
+    A = np.mat([[33.2, 12.4, 1], [28.1, 15.3, 0], [20.1, 13.3, 0]])
     m = 3  # row count
-    n = 2  # column count
+    n = 3  # column count
     prettyPrint("A, matrix data", A)
 
-    global MIN, MAX
+    global MIN, MAX, RMS
     MAX = float(A.max())
     MIN = float(A.min())
-    print("max: {}, min : {}".format(MAX, MIN))
-
-    P = np.mat(A.copy())
-
+    RMS = 0
     for i in range(m):
         for j in range(n):
-            P.itemset((i, j), fMAX_MIN(P.item((i, j))))
+            RMS += A.item((i, j)) ** 2  # square
+    RMS = RMS ** 0.5  # root
+    print("max: {}, min : {}, rms : {}".format(MAX, MIN, RMS))
 
+    # 정규화
+    P = np.mat(A.copy())
+    for i in range(m):
+        for j in range(n):
+            P.itemset((i, j), fNormalization(P.item((i, j))))
+            # P.itemset((i, j), fMAX_MIN(P.item((i, j))))
     prettyPrint("P", P)
 
+    # 엔트로피
     E = []
     for j in range(n):
         s = 0
         for i in range(m):
             s += fEntropy(P.item((i, j)))
         E.append(s)
-
-    # 엔트로피가 음수만 나와!
     prettyPrint("Entropy", E)
 
+    # 다양성
     D = []
     for num in E:
         D.append(1 - num)
-
-    # 하지만 다양성은 양수네? 이래서 1에서 엔트로피를 빼는건가봐
     prettyPrint("Diversity", D)
 
+    # 가중치
     W = []
     for num in D:
         W.append(num / sum(D))
-
-    # 그래서 가중치는?
     prettyPrint("Weight", W)
 
+    # 가중치를 적용한 각 지역별 점수
     R = []
     for i in range(m):
         w = 0
         for j in range(n):
             w += W[j] * A.item((i, j))
         R.append(w)
-
-    # 가중치를 적용한 각 지역별 점수
     prettyPrint("Result", R)
 
 
