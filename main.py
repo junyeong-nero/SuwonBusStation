@@ -14,10 +14,10 @@ def draw_tile(center, zoom):
 
 
 def draw_station(_map, station):
-    print("draw_station : {}".format(station))
+    # print("draw_station : {}".format(station))
     folium.CircleMarker(location=station.coord,
                         radius=5,
-                        popup=station.name).add_to(_map)
+                        popup=station.point).add_to(_map)
 
 
 def draw_csv(_map, path, name="csv"):
@@ -60,8 +60,11 @@ def main():
     peo = extract.extract_people()  # 맵에다가 그리는건 힘들다.
     stations = extract.extract_bus()
 
-    for p in peo:
-        print(p)
+    for s in stations:
+        for p in peo:
+            if p.into(s):
+                s.point += p.value
+                break
 
     for s in stations:
         draw_station(geomap, s)

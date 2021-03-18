@@ -25,15 +25,15 @@ def extract_bus():
 
 
 def extract_people():
-    f = open('data/17.수원시_인구정보(고령)_격자.geojson', mode='rt', encoding='utf-8')
+    f = open('data/18.수원시_인구정보(생산가능)_격자.geojson', mode='rt', encoding='utf-8')
     old = json.loads(f.read())
     old_features = old['features']  # list
     res = []
     for grid in old_features:
         p = sq.Square(grid['geometry']['coordinates'][0][0])
-        p.size = grid['properties']['val']
+        p.value = grid['properties']['val']
         p.gid = grid['properties']['gid']
-        if p.size is not None:
+        if p.value is not None:
             res.append(p)
     return res
 
@@ -49,7 +49,7 @@ def extract_building():
 
 
 def main():
-
+    # [ [ 126.945165910641464, 37.257792911462978 ], [ 126.94515929933435, 37.258694272696282 ], [ 126.946286976215802, 37.258699551915505 ], [ 126.946293574087534, 37.25779819051094 ], [ 126.945165910641464, 37.257792911462978 ] ]
     extract_building()
     # print_stations()
     extract_people()
