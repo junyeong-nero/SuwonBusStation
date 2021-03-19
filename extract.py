@@ -1,7 +1,9 @@
 import pandas as pd
 import json
+import json5
 import domain.station as st
-import domain.square as sq
+import domain.grid as sq
+import domain.building as sb
 
 stations = []
 
@@ -24,13 +26,13 @@ def extract_bus():
     return arr
 
 
-def extract_people():
-    f = open('data/18.수원시_인구정보(생산가능)_격자.geojson', mode='rt', encoding='utf-8')
+def extract_people(path):
+    f = open(path, mode='rt', encoding='utf-8')
     old = json.loads(f.read())
     old_features = old['features']  # list
     res = []
     for grid in old_features:
-        p = sq.Square(grid['geometry']['coordinates'][0][0])
+        p = sq.Grid(grid['geometry']['coordinates'][0][0])
         p.value = grid['properties']['val']
         p.gid = grid['properties']['gid']
         if p.value is not None:
@@ -38,22 +40,15 @@ def extract_people():
     return res
 
 
-def extract_building():
+def extract_building(types):
+    res = []
     f = open('data/27.수원시_도로명주소(건물).geojson', mode='rt', encoding='utf-8')
     old = json.loads(f.read())
     old_features = old['features']  # list
     for grid in old_features:
         building_type = grid['properties']['BDTYP_CD']
-        if building_type == '13000' or building_type == '13100' or building_type == '13200':
-            print(grid['properties']['BULD_NM'])
-
-
-def main():
-    # [ [ 126.945165910641464, 37.257792911462978 ], [ 126.94515929933435, 37.258694272696282 ], [ 126.946286976215802, 37.258699551915505 ], [ 126.946293574087534, 37.25779819051094 ], [ 126.945165910641464, 37.257792911462978 ] ]
-    extract_building()
-    # print_stations()
-    extract_people()
-
-
-if __name__ == '__main__':
-    main()
+        if building_type in types:
+            res.append(sb.Building(building_name=grid['properties']['BULD_NM'],
+                                   building_type=building_type,
+                                   coord=grid['geometry']['coordinates'][0][0]))
+    return res
