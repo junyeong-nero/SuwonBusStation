@@ -73,8 +73,9 @@ def main():
         #                   poly=building.coord,
         #                   pop=building.name,
         #                   color="#4caf50")  # green
-        folium.Circle(location=building.coord[0],
+        folium.Circle(location=building.center,
                       radius=100,  # 100m 짜리 원
+                      popup=building.name,
                       color="#4caf50",
                       fill_color="#4caf50").add_to(geomap)
 
@@ -87,19 +88,29 @@ def main():
     factory_buildings = extract.extract_building(factory_types)
     for building in factory_buildings:
         # print(building.name)
-        draw_multipolygon(_map=geomap,
-                          poly=building.coord,
-                          pop=building.name)  # red
+        # draw_multipolygon(_map=geomap,
+        #                   poly=building.coord,
+        #                   pop=building.name)  # red
+        folium.Circle(location=building.center,
+                      radius=100,
+                      color="#FF6347",
+                      fill_color="#FF6347",
+                      popup=building.name).add_to(geomap)
 
     # 학교, 학원, 도서관
     study_types = ['08003', '08005', '08101', '08102', '08103', '08104', '08105', '08106']
     study_buildings = extract.extract_building(study_types)
     for building in study_buildings:
-        print(building.name)
-        draw_multipolygon(_map=geomap,
-                          poly=building.coord,
-                          pop=building.name,
-                          color="#ffeb3b")  # yellow
+        # print(building.name)
+        # draw_multipolygon(_map=geomap,
+        #                   poly=building.coord,
+        #                   pop=building.name,
+        #                   color="#ffeb3b")  # yellow
+        folium.Circle(location=building.center,
+                      radius=100,  # 100m 짜리 원
+                      popup=building.name,
+                      color="#ffeb3b",
+                      fill_color="#ffeb3b").add_to(geomap)
 
     # # 인구정보 그리기
     # old = extract.extract_people('data/17.수원시_인구정보(고령)_격자.geojson')

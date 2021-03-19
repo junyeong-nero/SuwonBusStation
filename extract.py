@@ -45,10 +45,16 @@ def extract_building(types):
     f = open('data/27.수원시_도로명주소(건물).geojson', mode='rt', encoding='utf-8')
     old = json.loads(f.read())
     old_features = old['features']  # list
+    t = []
     for grid in old_features:
         building_type = grid['properties']['BDTYP_CD']
+        building_name = grid['properties']['BULD_NM']
+        print(building_name)
+        if building_name in t:
+            continue
         if building_type in types:
-            res.append(sb.Building(building_name=grid['properties']['BULD_NM'],
+            t.append(building_name)
+            res.append(sb.Building(building_name=building_name,
                                    building_type=building_type,
                                    coord=grid['geometry']['coordinates'][0][0]))
     return res
